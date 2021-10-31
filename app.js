@@ -1,18 +1,21 @@
-export default function appSrc(express, bodyParser, createReadStream, crypto, http) {
+import CORS from "./CORS.js";
+
+
+export default function appSrc(express, bodyParser, createReadStream, crypto, http, User, UserController) {
 
     const app = express();
 
-    const allowCrossDomain = function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,OPTIONS,DELETE');
-        res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Access-Control-Allow-Headers');
-        res.header('Content-Type', 'text/plain; charset=utf-8');
+    const allowCrossDomain = function (req, res, next) {
+        res.set(CORS)
         next();
     }
+
+    app.use('/user', UserController(express, User));
 
     app.get('/login/', allowCrossDomain, (req, res) => {
         res.status(200).send('kuchukov_d')
     })
+
 
     app.get('/code/', allowCrossDomain, (req, res) => {
         const filename = './app.js'
@@ -56,7 +59,7 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
     }
 
 
-    app.get('/req/',  allowCrossDomain, function (req, res) {
+    app.get('/req/', allowCrossDomain, function (req, res) {
         httprequest(req.query.addr).then((data) => {
             const response = {
                 body: JSON.stringify(data),
@@ -74,9 +77,11 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
 
     })
 
-    app.all('/*/',allowCrossDomain, (req, res) => {
+
+    app.all('/*', allowCrossDomain, (req, res) => {
         res.status(200).send('kuchukov_d')
     })
+
 
     return app;
 }
