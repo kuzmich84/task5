@@ -1,7 +1,7 @@
 import CORS from "./CORS.js";
 
 
-export default function appSrc(express, bodyParser, createReadStream, crypto, http, User, UserController) {
+export default function appSrc(express, bodyParser, createReadStream, crypto, http, User, UserController, m) {
 
     const app = express();
 
@@ -10,7 +10,7 @@ export default function appSrc(express, bodyParser, createReadStream, crypto, ht
         next();
     }
 
-    app.use('/user', UserController(express, User));
+    app.use('/insert/', allowCrossDomain, UserController(express, User, m));
 
     app.get('/login/', allowCrossDomain, (req, res) => {
         res.status(200).send('kuchukov_d')
